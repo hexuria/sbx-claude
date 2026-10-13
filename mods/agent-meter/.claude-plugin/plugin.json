@@ -1,0 +1,6 @@
+{
+  "name": "agent-meter",
+  "version": "0.6.0",
+  "description": "Status line: each agent's model, effort and tokens, plus 5-hour/weekly limit usage and session cost",
+  "types": "./types/index.d.ts"
+}

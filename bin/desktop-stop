@@ -1,0 +1,4 @@
+#!/bin/bash
+USER=${USER:-$(id -un)}
+pkill -u "$USER" -f "websockify.*6080"; pkill -u "$USER" -x xfce4-session; pkill -u "$USER" -x Xvnc
+echo "Desktop stopped"

@@ -1,0 +1,47 @@
+#!/bin/bash
+# Start the virtual desktop (TigerVNC :1 + XFCE + noVNC). Safe to run repeatedly.
+set -u
+USER=${USER:-$(id -un)}
+DISP=:1
+GEOM=${DESKTOP_GEOMETRY:-1280x800}
+LOG=$HOME/.local/share/agent-desktop
+mkdir -p "$LOG" "$HOME/.vnc"
+export PATH="$HOME/.local/bin:$PATH"
+
+# X + VNC server (localhost only, no VNC password: access is gated by the SSH tunnel)
+if ! xdpyinfo -display $DISP >/dev/null 2>&1; then
+  rm -f /tmp/.X1-lock /tmp/.X11-unix/X1
+  setsid Xvnc $DISP -geometry "$GEOM" -depth 24 -rfbport 5901 -localhost=1 \
+    -SecurityTypes None -AlwaysShared \
+    >"$LOG/xvnc.log" 2>&1 < /dev/null &
+  for i in $(seq 50); do xdpyinfo -display $DISP >/dev/null 2>&1 && break; sleep 0.2; done
+fi
+
+# XFCE session
+if ! pgrep -u "$USER" -x xfce4-session >/dev/null; then
+  DISPLAY=$DISP setsid dbus-launch --exit-with-session startxfce4 >"$LOG/xfce.log" 2>&1 < /dev/null &
+  # wait for xfdesktop, then set the wallpaper on every monitor/workspace
+  for i in $(seq 60); do pgrep -u "$USER" -x xfdesktop >/dev/null && break; sleep 0.5; done
+  sleep 2
+fi
+WALL=${DESKTOP_WALLPAPER:-/usr/share/backgrounds/xfce/xfce-leaves.svg}
+BUS=$(grep -z DBUS_SESSION_BUS_ADDRESS /proc/$(pgrep -u "$USER" -x xfce4-session | head -1)/environ 2>/dev/null | tr -d '\0' | cut -d= -f2-)
+if [ -n "$BUS" ]; then
+  export DBUS_SESSION_BUS_ADDRESS=$BUS DISPLAY=$DISP
+  for MON in $(xrandr --listmonitors 2>/dev/null | awk 'NR>1{print $NF}'); do
+    for WS in 0 1 2 3; do
+      B=/backdrop/screen0/monitor$MON/workspace$WS
+      xfconf-query -c xfce4-desktop -p $B/last-image -n -t string -s "$WALL"
+      xfconf-query -c xfce4-desktop -p $B/image-style -n -t int -s 5
+      xfconf-query -c xfce4-desktop -p $B/color-style -n -t int -s 0
+    done
+  done
+  xset s off -dpms 2>/dev/null
+fi
+
+# noVNC (view in a web browser at http://localhost:6080/vnc.html)
+if ! pgrep -f "websockify.*6080" >/dev/null; then
+  setsid websockify --web /usr/share/novnc 127.0.0.1:6080 127.0.0.1:5901 \
+    >"$LOG/novnc.log" 2>&1 < /dev/null &
+fi
+echo "Desktop running on DISPLAY=$DISP | VNC localhost:5901 | noVNC http://localhost:6080/vnc.html"

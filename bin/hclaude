@@ -1,0 +1,5 @@
+#!/bin/bash
+# Launch Claude Code through the Headroom compression proxy (port 8787).
+# --tool-search keeps on-demand tool loading; --code-memory none skips the Serena MCP.
+# Named hclaude, not cc: cc is the C compiler, and builds run whatever cc is first on PATH.
+exec headroom wrap claude --tool-search true --code-memory none "$@"

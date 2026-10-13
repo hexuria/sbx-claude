@@ -1,0 +1,5 @@
+#!/bin/sh
+# Desktop Chromium (Playwright's build), with its own profile separate from the browser-agent's.
+CHROME=$(ls -d "$HOME"/.cache/ms-playwright/chromium-*/chrome-linux*/chrome 2>/dev/null | sort -V | tail -1)
+[ -n "$CHROME" ] || { echo "Chromium not installed: run install.sh" >&2; exit 1; }
+exec "$CHROME" --user-data-dir="$HOME/.config/chromium-desktop" --no-first-run --no-default-browser-check "$@"

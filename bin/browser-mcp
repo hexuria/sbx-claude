@@ -1,0 +1,6 @@
+#!/bin/bash
+# Playwright MCP for the browser-agent. Shows the browser on the VNC desktop (:1) when it is up, else headless.
+export DISPLAY=:1
+ARGS=(--browser chromium --user-data-dir "$HOME/.local/share/agent-desktop/pw-profile" --viewport-size 1260x700 --output-dir "$HOME/.local/share/agent-desktop/browser-output")
+xdpyinfo >/dev/null 2>&1 || ARGS+=(--headless)
+exec "$(command -v playwright-mcp)" "${ARGS[@]}" "$@"

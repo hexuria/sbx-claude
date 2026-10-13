@@ -1,0 +1,10 @@
+[Desktop Entry]
+NoDisplay=true
+Version=1.0
+Encoding=UTF-8
+Type=X-XFCE-Helper
+X-XFCE-Category=WebBrowser
+X-XFCE-CommandsWithParameter=__HOME__/.local/bin/chromium "%s"
+Icon=web-browser
+Name=Chromium
+X-XFCE-Commands=__HOME__/.local/bin/chromium

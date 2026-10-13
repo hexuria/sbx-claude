@@ -1,0 +1,4 @@
+#!/bin/bash
+# Computer-use MCP for the computer-use-agent (drives the VNC desktop on :1).
+export DISPLAY=:1
+exec "$HOME/.local/share/agent-desktop/venv/bin/python" "$HOME/.local/share/agent-desktop/computer_mcp.py" "$@"

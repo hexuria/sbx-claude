@@ -1,0 +1,7 @@
+{
+  "name": "my-mods",
+  "owner": { "name": "buwizbooks" },
+  "plugins": [
+    { "name": "agent-meter", "source": "./agent-meter", "description": "Status line: per-agent model, effort and tokens, plus 5h/weekly limit usage and cost" }
+  ]
+}
