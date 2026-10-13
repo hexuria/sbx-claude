@@ -32,6 +32,23 @@ sbx --cloud run claude --name buwiz-books
 
 This creates the sandbox and opens Claude Code in it. Sign in with `/login`, then leave it open and use a second terminal on your machine for step 4.
 
+**Bigger machine.** The default is 2 CPUs and 4 GiB. To pick another size, create the sandbox first with `--cpus` and `--memory`, then open it:
+
+```bash
+sbx --cloud create --name buwiz-books --cpus 16 --memory 32g claude
+sbx --cloud run claude --name buwiz-books
+```
+
+| Size | CPUs | Memory | Per hour |
+|---|---|---|---|
+| micro | 1 | 2 GiB | $0.070 |
+| small (default) | 2 | 4 GiB | $0.140 |
+| medium | 4 | 8 GiB | $0.280 |
+| large | 8 | 16 GiB | $0.560 |
+| xl | 16 | 32 GiB | $1.118 |
+
+Giving only `--cpus` picks the matching memory. An existing sandbox can't be resized (the flags are rejected when it resumes), so for a different size create a new sandbox under another name and repeat steps 4 and 5 there.
+
 ### 4. Open the network and extend the sandbox's life
 
 ```bash
