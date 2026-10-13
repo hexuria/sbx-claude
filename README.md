@@ -30,7 +30,7 @@ Cloud sandboxes need sbx 0.45.0 or later.
 sbx --cloud run claude --name buwiz-books
 ```
 
-This creates the sandbox and opens Claude Code in it. Sign in with `/login`, then leave it open and use a second terminal on your machine for step 4.
+This creates the sandbox and opens Claude Code in it. Leave it open and use a second terminal on your machine for step 4.
 
 **Bigger machine.** The default is 2 CPUs and 4 GiB. To pick another size, create the sandbox first with `--cpus` and `--memory`, then open it:
 
@@ -47,7 +47,7 @@ sbx --cloud run claude --name buwiz-books
 | large | 8 | 16 GiB | $0.560 |
 | xl | 16 | 32 GiB | $1.118 |
 
-Giving only `--cpus` picks the matching memory. An existing sandbox can't be resized (the flags are rejected when it resumes), so for a different size create a new sandbox under another name and repeat steps 4 and 5 there.
+Giving only `--cpus` picks the matching memory. An existing sandbox can't be resized (the flags are rejected when it resumes), so for a different size create a new sandbox under another name and repeat steps 4 to 6 there.
 
 ### 4. Open the network and extend the sandbox's life
 
@@ -63,7 +63,19 @@ sbx --cloud ttl +23h claude/buwiz-books
 - **Network.** Until the policy is set, the sandbox can't reach the internet: cloning from GitHub fails with `Could not resolve host: github.com`. To allow only some hosts instead, create the sandbox with `--allow-network github.com:443`.
 - **Lifetime.** A cloud sandbox expires after 1 hour by default, and can't be extended past 24 hours from creation, so `+23h` right after creating it is the maximum. `sbx --cloud ttl claude/buwiz-books` shows what's left. At expiry a sandbox that can be resumed is stopped, keeping its files; otherwise it is deleted, and you start again from step 3.
 
-### 5. Install everything
+### 5. Sign in to Claude and GitHub
+
+In the Claude Code session from step 3:
+
+```
+/login
+! gh auth login
+```
+
+- `/login` signs Claude Code in to your Claude account. Every new sandbox needs it.
+- `gh auth login` signs the GitHub CLI in, so you can clone private repos and push from the sandbox. Choose GitHub.com, HTTPS and "Login with a web browser": it prints a one-time code to enter at <https://github.com/login/device>. It needs the network from step 4.
+
+### 6. Install everything
 
 In the Claude Code session from step 3:
 
@@ -74,7 +86,7 @@ In the Claude Code session from step 3:
 
 It takes several minutes (apt packages, Chromium, the desktop). When it finishes, exit Claude Code with `/exit`.
 
-### 6. Reconnect
+### 7. Reconnect
 
 ```bash
 sbx --cloud exec -it \
@@ -87,7 +99,7 @@ sbx --cloud exec -it \
 
 `sbx --cloud attach claude/buwiz-books` also works: it reconnects to the session that is already running (detach with `Ctrl+\`).
 
-### 7. Watch the desktop (optional)
+### 8. Watch the desktop (optional)
 
 Once, on your machine:
 
@@ -111,7 +123,7 @@ The desktop doesn't come back on its own after the sandbox stops and resumes: ru
 sbx --cloud stop claude/buwiz-books
 ```
 
-A stopped sandbox isn't billed. Reconnect with step 6.
+A stopped sandbox isn't billed. Reconnect with step 7.
 
 ## What it sets up
 
@@ -152,6 +164,6 @@ Develop it with `claude --plugin-dir mods/agent-meter`; test with `claude plugin
 
 ## Not included
 
-- Credentials: sign in with `/login` in each new sandbox. For GitHub, run `gh auth login` in the sandbox; a secret added at agentic-platform.docker.com while a sandbox was running didn't reach it.
+- Credentials: every new sandbox needs step 5 again. A secret added at agentic-platform.docker.com while a sandbox was running didn't reach it, so sign in to GitHub with `gh auth login`.
 - Personal memory files under `~/.claude/projects/`.
 - Permission-mode settings (auto mode, skipped prompts): set those with `/config`.

@@ -51,7 +51,7 @@ esac
 
 # --- System packages ---------------------------------------------------------
 say "System packages"
-PKGS=(git curl ca-certificates python3 nodejs npm)
+PKGS=(git gh curl ca-certificates python3 nodejs npm)
 if [ "$WITH_DESKTOP" = 1 ]; then
   PKGS+=(xfce4 xfce4-terminal dbus-x11 xdotool imagemagick x11-utils x11-xserver-utils
          fonts-dejavu fonts-noto-color-emoji tigervnc-standalone-server tigervnc-tools novnc websockify)
@@ -136,7 +136,7 @@ fi
 
 say "Done"
 cat <<EOF
-Exit Claude Code (/exit) and reconnect to load the new setup (README, step 6).
+Exit Claude Code (/exit) and reconnect to load the new setup (README, step 7).
 Start Claude Code through headroom with:  hclaude
 Watch the desktop: on your machine run 'sbx --cloud setup ssh' once, then
   ssh -N -L 6080:127.0.0.1:6080 <sandbox-id>@sbx_cloud
